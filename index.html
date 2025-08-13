@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolidated Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #1a202c;
+        }
+        /* Snappr Inspired Colors */
+        :root {
+            --snappr-purple: #6633FF;
+            --snappr-pink: #FF3366;
+            --snappr-blue: #3B82F6;
+            --snappr-dark: #1a202c;
+            --snappr-gray: #4a5568;
+            --snappr-light-gray: #edf2f7;
+        }
+        .presentation-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .slide {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            margin-bottom: 2rem;
+            padding: 2.5rem;
+            position: relative;
+        }
+        .project-section {
+            display: none;
+        }
+        .project-section.active {
+            display: block;
+        }
+        .slide-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: white;
+            border-radius: 9999px;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--snappr-dark);
+            margin-bottom: 0.25rem;
+        }
+        .main-subtitle {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: var(--snappr-gray);
+            margin-bottom: 2.5rem;
+        }
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--snappr-dark);
+            margin-bottom: 1rem;
+        }
+        /* Project 1 Specific Styles */
+        #project1 .slide { border-top: 8px solid var(--snappr-purple); }
+        #project1 .slide-number { background-color: var(--snappr-purple); }
+        #project1 h3 { color: var(--snappr-purple); }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; background-color: var(--snappr-light-gray); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; }
+        .kpi-card { text-align: center; }
+        .kpi-number { font-size: 2.5rem; font-weight: 800; color: var(--snappr-purple); }
+        .kpi-label { font-size: 0.875rem; color: var(--snappr-gray); margin-top: 0.5rem; }
+        .org-box { background-color: white; border: 2px solid var(--snappr-light-gray); border-radius: 12px; padding: 0.5rem; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; min-height: 40px; }
+        .org-box .title { font-weight: 600; font-size: 0.7rem; line-height: 1.2; }
+        .org-head { background-color: var(--snappr-purple); color: white; padding: 1rem 1.5rem; }
+        #project1 .org-manager { background-color: #a280ff; color: white; }
+        #project1 .org-specialist { background-color: var(--snappr-pink); color: white; }
+        .gantt-chart { font-size: 0.8rem; }
+        .gantt-header, .gantt-row { display: grid; grid-template-columns: 180px repeat(12, 1fr); border-bottom: 1px solid #e2e8f0; text-align: center; padding: 0.5rem 0; align-items: center; }
+        .gantt-header { font-weight: 600; }
+        .gantt-task { text-align: left; font-weight: 500; }
+        .gantt-bar { height: 1.5rem; border-radius: 4px; margin: 0 1px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.65rem; font-weight: 600; }
+        .bar-recruitment { background-color: #6633FF; }
+        .bar-onboarding { background-color: #FF3366; }
+        .bar-training { background-color: #2563eb; }
+        .bar-production { background-color: #16a34a; }
+
+        /* Project 2 Specific Styles */
+        #project2 .slide { border-top: 8px solid var(--snappr-pink); }
+        #project2 .slide-number { background-color: var(--snappr-pink); }
+        .focus-area-card { background-color: var(--snappr-light-gray); border-radius: 12px; padding: 1.5rem; height: 100%; }
+        .focus-area-title { font-weight: 700; color: var(--snappr-purple); margin-bottom: 0.5rem; }
+        .focus-area-description { font-size: 0.875rem; color: var(--snappr-gray); }
+        .initiative-card { display: flex; align-items: flex-start; gap: 1rem; background-color: #fff; padding: 1rem; border-radius: 12px; border: 1px solid var(--snappr-light-gray); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .initiative-icon { font-size: 1.5rem; color: var(--snappr-purple); margin-top: 0.25rem; }
+        .initiative-title { font-weight: 600; color: var(--snappr-dark); font-size: 1rem; }
+        .initiative-text { font-size: 0.875rem; color: var(--snappr-gray); }
+
+        /* Project 3 Specific Styles */
+        #project3 .slide { border-top: 8px solid var(--snappr-purple); }
+        #project3 .slide-number { background-color: var(--snappr-purple); }
+        .plan-card { background-color: var(--snappr-light-gray); border-radius: 12px; padding: 1.5rem; height: 100%; }
+        #project3 .org-box { padding: 1rem 1.5rem; }
+        #project3 .org-manager { background-color: var(--snappr-purple); color: white; }
+        .org-lead { background-color: #a280ff; color: white; }
+        .org-trainer { background-color: var(--snappr-pink); color: white; }
+        .org-specialist { background-color: #f59e0b; color: white; }
+        .okr-card { border-left: 4px solid var(--snappr-purple); padding-left: 1rem; margin-bottom: 1rem; }
+        .okr-title { font-weight: 700; font-size: 1rem; }
+        .okr-kr { font-size: 0.9rem; color: var(--snappr-gray); }
+
+        /* Project 4 Specific Styles */
+        #project4 .slide { border-top: 8px solid var(--snappr-blue); }
+        #project4 .slide-number { background-color: var(--snappr-blue); }
+        .finding-card { background-color: var(--snappr-light-gray); border-radius: 12px; padding: 1.5rem; height: 100%; }
+        .finding-title { font-weight: 700; font-size: 1.1rem; color: var(--snappr-blue); margin-bottom: 0.5rem; }
+        .finding-text { font-size: 0.9rem; color: var(--snappr-gray); }
+
+        /* Navigation Banner */
+        .nav-banner {
+            background-color: var(--snappr-dark);
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .nav-banner nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .nav-banner a {
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+            text-decoration: none;
+            border: 2px solid transparent;
+        }
+        .nav-banner a:hover {
+            background-color: var(--snappr-purple);
+        }
+        .nav-banner a.active {
+            background-color: var(--snappr-pink);
+            color: white;
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+        <div class="nav-banner">
+            <nav id="project-nav">
+                <a href="#project1" data-project="project1" class="active">Future People Ops Org</a>
+                <a href="#project2" data-project="project2">Driving Culture Change</a>
+                <a href="#project3" data-project="project3">Zero to One</a>
+                <a href="#project4" data-project="project4">Unblocking Teams</a>
+            </nav>
+        </div>
+
+        <div id="project1" class="project-section active">
+            <div class="slide">
+                <div class="slide-number">1</div>
+                <h1 class="main-title">The 90-Day Ramp: A Blueprint for Growth</h1>
+                <p class="main-subtitle">Our Strategic Plan to Onboard 150 AI Generators</p>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6 bg-gray-50 rounded-xl">
+                        <div class="text-4xl mb-3">🎯</div>
+                        <h3 class="!text-gray-800">Strategic Outsourcing</h3>
+                        <p class="text-sm text-gray-600">We will build a flexible talent pipeline by partnering with specialists for high-volume needs, allowing our core team to focus on strategic, high-impact work.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-xl">
+                        <div class="text-4xl mb-3">⚙️</div>
+                        <h3 class="!text-gray-800">Automated & Lean HR Core</h3>
+                        <p class="text-sm text-gray-600">We will embed automation at our core. This isn't just about tools; it's a philosophy of eliminating manual work to create a leaner, more effective operational engine.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-xl">
+                        <div class="text-4xl mb-3">🌱</div>
+                        <h3 class="!text-gray-800">Front-Loaded Leadership</h3>
+                        <p class="text-sm text-gray-600">We will invest in our leaders *before* they are needed. By front-loading leadership training, we build capacity ahead of demand, ensuring new teams are set up for success.</p>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <h3 class="text-center">First Application: The 90-Day Ramp</h3>
+                    <div class="kpi-grid">
+                        <div class="kpi-card"><div class="kpi-number">150</div><div class="kpi-label">AI Generators to Hire</div></div>
+                        <div class="kpi-card"><div class="kpi-number">90</div><div class="kpi-label">Days to Execute</div></div>
+                        <div class="kpi-card"><div class="kpi-number">12</div><div class="kpi-label">New Leaders to Train</div></div>
+                        <div class="kpi-card"><div class="kpi-number">80%</div><div class="kpi-label">Target Interview Throughput</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide">
+                 <div class="slide-number">2</div>
+                <h2 class="main-title">Org & Team Design</h2>
+                <p class="main-subtitle">Built for efficiency, scalability, and leadership effectiveness.</p>
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3>A. The People Operations Structure</h3>
+                        <div class="p-6 bg-gray-50 rounded-xl">
+                            <div class="text-center space-y-4">
+                                <div class="inline-block"><div class="org-box org-head"><div class="title text-base">People Ops Lead</div></div></div>
+                                <div class="w-px bg-gray-300 h-4 mx-auto"></div>
+                                <div class="flex justify-center"><div class="w-full h-px bg-gray-300"></div></div>
+                                <div class="grid grid-cols-5 gap-2">
+                                    <div class="space-y-2">
+                                        <div class="org-box org-manager"><div class="title !text-sm">TA Manager</div></div>
+                                        <div class="org-box"><div class="title">Sr. TA Specialist</div></div>
+                                        <div class="org-box"><div class="title">TA Specialist</div></div>
+                                        <div class="org-box"><div class="title">Recruitment Coord.</div></div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="org-box org-manager"><div class="title !text-sm">HR Ops Manager</div></div>
+                                        <div class="org-box"><div class="title">HR Lead</div></div>
+                                        <div class="org-box"><div class="title">Engagement Spec.</div></div>
+                                        <div class="org-box"><div class="title">HR Generalist</div></div>
+                                        <div class="org-box"><div class="title">Comp & Benefits</div></div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="org-box org-manager"><div class="title !text-sm">Payroll Manager</div></div>
+                                        <div class="org-box"><div class="title">Sr. Payroll Spec.</div></div>
+                                        <div class="org-box"><div class="title">Payroll Specialist</div></div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="org-box org-manager"><div class="title !text-sm">L&D Manager</div></div>
+                                        <div class="org-box"><div class="title">Sr. L&D Specialist</div></div>
+                                        <div class="org-box"><div class="title">L&D Specialist</div></div>
+                                        <div class="org-box"><div class="title">Content Specialist</div></div>
+                                    </div>
+                                    <div class="space-y-2"><div class="org-box org-specialist"><div class="title !text-sm">Automation Specialist</div></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>B. The Scalable AI Ops Leadership Pod</h3>
+                        <div class="p-6 bg-gray-50 rounded-xl flex flex-col justify-center h-full">
+                             <div class="text-center space-y-4">
+                                <div class="inline-block"><div class="org-box org-head"><div class="title text-base">AI Ops Manager</div><div class="detail text-xs">-Oversees 5 Team Leads</div></div></div>
+                                <div class="w-px bg-gray-300 h-4 mx-auto"></div>
+                                <div class="flex justify-center"><div class="w-3/4 h-px bg-gray-300"></div></div>
+                                <div class="flex flex-wrap justify-center gap-2">
+                                   <div class="org-box org-manager text-sm p-3"><div class="title !text-base">TL</div></div>
+                                   <div class="org-box org-manager text-sm p-3"><div class="title !text-base">TL</div></div>
+                                   <div class="org-box org-manager text-sm p-3"><div class="title !text-base">TL</div></div>
+                                   <div class="org-box org-manager text-sm p-3"><div class="title !text-base">TL</div></div>
+                                   <div class="org-box org-manager text-sm p-3"><div class="title !text-base">TL</div></div>
+                                </div>
+                                <div class="text-center pt-4">
+                                    <div class="font-semibold text-gray-600">1 Manager : 5 Team Leads</div>
+                                    <div class="font-semibold text-gray-600">1 Team Lead : 15 AI Generators</div>
+                                </div>
+                                 <p class="text-xs text-gray-500 mt-4 italic">This leadership pod will be duplicated. Total need: 2 Managers & 10 Team Leads. Clear ratios ensure strong support and prevent burnout.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="slide">
+                <div class="slide-number">3</div>
+                <h2 class="main-title">90-Day Launch & Training Timeline</h2>
+                <p class="main-subtitle">A phased approach to ensure a seamless ramp from recruitment to full productivity.</p>
+                <div class="gantt-chart bg-gray-50 p-4 rounded-xl mb-6">
+                    <div class="gantt-header">
+                        <div>Phase / Activity</div>
+                        <div>W1</div><div>W2</div><div>W3</div><div>W4</div><div>W5</div><div>W6</div><div>W7</div><div>W8</div><div>W9</div><div>W10</div><div>W11</div><div>W12</div>
+                    </div>
+                    <div class="gantt-row"><div class="gantt-task font-bold">1. Recruitment</div></div>
+                    <div class="gantt-row"><div class="gantt-task pl-4">Leadership Hiring</div><div class="gantt-bar bar-recruitment"></div><div class="gantt-bar bar-recruitment"></div><div></div><div></div><div class="gantt-bar bar-recruitment"></div><div class="gantt-bar bar-recruitment"></div></div>
+                    <div class="gantt-row"><div class="gantt-task font-bold">2. Onboarding & Training</div></div>
+                    <div class="gantt-row"><div class="gantt-task pl-4">Leadership Onboarding</div><div></div><div></div><div class="gantt-bar bar-onboarding">B1</div><div></div><div></div><div></div><div class="gantt-bar bar-onboarding">B2</div></div>
+                    <div class="gantt-row"><div class="gantt-task pl-4">Leadership Training</div><div></div><div></div><div></div><div class="gantt-bar bar-training">B1</div><div class="gantt-bar bar-training">B1</div><div></div><div></div><div class="gantt-bar bar-training">B2</div><div class="gantt-bar bar-training">B2</div></div>
+                    <div class="gantt-row"><div class="gantt-task pl-4">AI Gen Onboarding & Training</div><div></div><div></div><div></div><div></div><div class="gantt-bar bar-training">C1/25</div><div class="gantt-bar bar-training">C2/25</div><div class="gantt-bar bar-training">C3/25</div><div class="gantt-bar bar-training">C4/25</div><div class="gantt-bar bar-training">C5/25</div><div class="gantt-bar bar-training">C6/25</div></div>
+                    <div class="gantt-row"><div class="gantt-task font-bold">3. Production</div></div>
+                    <div class="gantt-row"><div class="gantt-task pl-4">AI Gen Ramp to Prod.</div><div></div><div></div><div></div><div></div><div></div><div></div><div class="gantt-bar bar-production">C1/25</div><div class="gantt-bar bar-production">C2/25</div><div class="gantt-bar bar-production">C3/25</div><div class="gantt-bar bar-production">C4/25</div><div class="gantt-bar bar-production">C5/25</div><div class="gantt-bar bar-production">C6/25</div></div>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-number">4</div>
+                <h2 class="main-title">Defining Success: Metrics & Culture</h2>
+                <p class="main-subtitle">We will measure success through clear KPIs that reinforce a culture of excellence.</p>
+                <h3>Key Performance Indicators (KPIs)</h3>
+                <div class="kpi-grid">
+                    <div class="kpi-card"><div class="kpi-number">&lt;21</div><div class="kpi-label">Days to Fill (Avg)</div></div>
+                    <div class="kpi-card"><div class="kpi-number">90%</div><div class="kpi-label">Offer Acceptance Rate</div></div>
+                    <div class="kpi-card"><div class="kpi-number">&lt;21</div><div class="kpi-label">Days to Productivity</div></div>
+                    <div class="kpi-card"><div class="kpi-number">95%</div><div class="kpi-label">90-Day Retention Rate</div></div>
+                </div>
+                <h3 class="!text-black">Driving Culture Through Tactical Initiatives</h3>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="p-6 bg-gray-50 rounded-xl"><h3 class="!text-gray-800">Culture of Coaching & Support</h3><p class="text-sm text-gray-600">Our front-loaded leadership model means new hires are welcomed by trained, prepared managers. With a 1:15 ratio, Team Leads have the bandwidth for regular, high-quality coaching. We will track <strong>Coaching Completion Rate</strong> and <strong>Quality of Coaching</strong> via feedback surveys to ensure this becomes a cornerstone of our culture.</p></div>
+                    <div class="p-6 bg-gray-50 rounded-xl"><h3 class="!text-gray-800">Culture of Efficiency & Focus</h3><p class="text-sm text-gray-600">By outsourcing volume recruitment and embedding an Automation Specialist, we signal a commitment to working smarter. This frees up our internal teams to focus on high-value activities: strategic interviewing, new hire experience, and proactive employee relations, building a culture where everyone's time is respected.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project2" class="project-section">
+            <div class="slide">
+                <div class="slide-number">1</div>
+                <h1 class="main-title">Ignite Manila: A 90-Day Culture Sprint</h1>
+                <p class="main-subtitle">Tactical Initiatives to Build a High-Performing & Engaging Team</p>
+                <div class="grid md:grid-cols-5 gap-6">
+                    <div class="focus-area-card text-center"><div class="text-4xl mb-2">🚀</div><div class="focus-area-title">Performance-Driven</div><p class="focus-area-description">Fostering a culture of excellence and clear results.</p></div>
+                    <div class="focus-area-card text-center"><div class="text-4xl mb-2">🔄</div><div class="focus-area-title">Agile & Adaptable</div><p class="focus-area-description">Embracing change as a constant and an opportunity.</p></div>
+                    <div class="focus-area-card text-center"><div class="text-4xl mb-2">💬</div><div class="focus-area-title">Effective Communication</div><p class="focus-area-description">Enhancing clarity and confidence in English communication.</p></div>
+                    <div class="focus-area-card text-center"><div class="text-4xl mb-2">🎉</div><div class="focus-area-title">Fun & Engaging</div><p class="focus-area-description">Creating a vibrant and enjoyable workplace.</p></div>
+                    <div class="focus-area-card text-center"><div class="text-4xl mb-2">🤝</div><div class="focus-area-title">Equity & Ownership</div><p class="focus-area-description">Empowering every team member to contribute and grow.</p></div>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-number">2</div>
+                <h2 class="main-title">Driving Excellence & Empowerment</h2>
+                <p class="main-subtitle">Initiatives for Performance, Agility, and Ownership.</p>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="space-y-4"><h3 class="text-center">🚀 Performance</h3><div class="initiative-card"><div class="initiative-icon">🎯</div><div><div class="initiative-title">Launch OKR Program</div><p class="initiative-text">Align all teams on measurable, site-wide goals.</p></div></div><div class="initiative-card"><div class="initiative-icon">🗣️</div><div><div class="initiative-title">"Radical Candor" Workshops</div><p class="initiative-text">Implement feedback training for direct, constructive communication.</p></div></div><div class="initiative-card"><div class="initiative-icon">📊</div><div><div class="initiative-title">Visible Performance Dashboards</div><p class="initiative-text">Display real-time metrics, focusing on predictive Lead Measures over lagging results, to drive proactive accountability.</p></div></div></div>
+                    <div class="space-y-4"><h3 class="text-center">🔄 Agility</h3><div class="initiative-card"><div class="initiative-icon">🏆</div><div><div class="initiative-title">"Change Champions" Program</div><p class="initiative-text">Empower team members to be advocates for new processes.</p></div></div><div class="initiative-card"><div class="initiative-icon">🗓️</div><div><div class="initiative-title">"Pivots & Progress" Huddle</div><p class="initiative-text">A bi-weekly meeting to celebrate wins and share updates.</p></div></div><div class="initiative-card"><div class="initiative-icon">❓</div><div><div class="initiative-title">Leadership AMAs</div><p class="initiative-text">Monthly "Ask Me Anything" sessions to build trust.</p></div></div></div>
+                    <div class="space-y-4"><h3 class="text-center">🤝 Ownership</h3><div class="initiative-card"><div class="initiative-icon">💡</div><div><div class="initiative-title">The "Lightbulb Initiative"</div><p class="initiative-text">Awarded ideas get a budget, team, and training to lead the project.</p></div></div><div class="initiative-card"><div class="initiative-icon">🗺️</div><div><div class="initiative-title">Transparent Career Pathways</div><p class="initiative-text">Publish clear career progression frameworks for all major roles.</p></div></div><div class="initiative-card"><div class="initiative-icon">🌍</div><div><div class="initiative-title">Establish ERGs</div><p class="initiative-text">Support Employee Resource Groups to foster community and mentorship.</p></div></div></div>
+                </div>
+            </div>
+             <div class="slide">
+                <div class="slide-number">3</div>
+                <h2 class="main-title">Fostering Connection & Community</h2>
+                <p class="main-subtitle">Initiatives for Communication and Fun.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-4"><h3 class="text-center">💬 Communication</h3><div class="initiative-card"><div class="initiative-icon">🎓</div><div><div class="initiative-title">"Confident English" Workshops</div><p class="initiative-text">Offer voluntary workshops on professional communication skills.</p></div></div><div class="initiative-card"><div class="initiative-icon">👥</div><div><div class="initiative-title">English Buddy System</div><p class="initiative-text">Pair employees for informal conversations to build language confidence.</p></div></div><div class="initiative-card"><div class="initiative-icon">📝</div><div><div class="initiative-title">"English-First" Communication</div><p class="initiative-text">Establish English as the standard for all official communications.</p></div></div></div>
+                    <div class="space-y-4"><h3 class="text-center">🎉 Fun</h3><div class="initiative-card"><div class="initiative-icon">🥳</div><div><div class="initiative-title">Launch a Social Committee</div><p class="initiative-text">A volunteer-led group with a budget to plan monthly social events.</p></div></div><div class="initiative-card"><div class="initiative-icon">🎭</div><div><div class="initiative-title">Themed "Snappr Spirit" Days</div><p class="initiative-text">Institute themed days to inject creativity into the work week.</p></div></div><div class="initiative-card"><div class="initiative-icon">👏</div><div><div class="initiative-title">"Wins & Kudos" Channel</div><p class="initiative-text">A dedicated Slack channel for celebrating team achievements.</p></div></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project3" class="project-section">
+            <div class="slide">
+                <div class="slide-number">1</div>
+                <h1 class="main-title">Org Design: A Lean Foundation for Speed</h1>
+                <p class="main-subtitle">Starting with a core, agile unit designed for rapid learning and iteration.</p>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="text-center">
+                        <h3 class="mb-4">🏢 Foundational Structure</h3>
+                        <div class="inline-block space-y-4 text-center">
+                            <div class="inline-block org-box org-manager">
+                                <div class="title">Outbound Sales Manager</div>
+                            </div>
+                            <div class="w-px h-4 bg-gray-300 mx-auto"></div>
+                            <div class="flex justify-center gap-4">
+                                <div class="inline-block org-box org-lead">
+                                    <div class="title">Team Lead</div>
+                                </div>
+                                <div class="inline-block org-box org-trainer">
+                                    <div class="title">Sales Trainer</div>
+                                </div>
+                                <div class="inline-block org-box org-specialist">
+                                    <div class="title">Reports & Automation</div>
+                                </div>
+                            </div>
+                            <div class="w-px h-4 bg-gray-300 mx-auto"></div>
+                            <div class="inline-block org-box">
+                                <div class="title">10 Sales Representatives</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="mb-4 text-center">🧠 Strategic Rationale</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="plan-card text-left">
+                                <div class="text-2xl mb-2">📊</div>
+                                <div class="font-bold text-sm">Data-Driven Coaching</div>
+                                <p class="text-xs text-gray-600">A specialist owns data integrity, creating a single source of truth and freeing up leadership to focus 100% on coaching.</p>
+                            </div>
+                            <div class="plan-card text-left">
+                                <div class="text-2xl mb-2">🚀</div>
+                                <div class="font-bold text-sm">Scalable Onboarding</div>
+                                <p class="text-xs text-gray-600">A dedicated trainer ensures every new hire receives a consistent, high-quality onboarding, making the team easy to replicate.</p>
+                            </div>
+                            <div class="plan-card text-left">
+                                <div class="text-2xl mb-2">✅</div>
+                                <div class="font-bold text-sm">Agile Performance Mgmt</div>
+                                <p class="text-xs text-gray-600">The Team Lead's focus on direct QA and weekly 1:1s allows for immediate, real-time feedback and rapid skill development.</p>
+                            </div>
+                            <div class="plan-card text-left">
+                                <div class="text-2xl mb-2">⏰</div>
+                                <div class="font-bold text-sm">Lean WFM</div>
+                                <p class="text-xs text-gray-600">For a team of 10, the Team Lead manages scheduling and lead lists, eliminating the need for a dedicated WFM role at launch.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-number">2</div>
+                <h2 class="main-title">The 90-Day Launch Plan</h2>
+                <p class="main-subtitle">A phased timeline to build, enable, and ramp our new sales team.</p>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="plan-card"><div class="text-2xl font-bold text-purple-600">Days 1-30</div><h3 class="!text-purple-800">Recruitment</h3><p class="text-sm text-gray-600">Define profiles, screen, conduct sales simulations, and extend all offers for the team.</p></div>
+                    <div class="plan-card"><div class="text-2xl font-bold text-pink-600">Days 31-45</div><h3 class="!text-pink-800">Training</h3><p class="text-sm text-gray-600">Onboard the team, conduct a 2-week intensive training bootcamp, and begin supervised live calling.</p></div>
+                    <div class="plan-card"><div class="text-2xl font-bold text-blue-600">Days 46-90</div><h3 class="!text-blue-800">Performance Ramp</h3><p class="text-sm text-gray-600">Transition to full-time selling, focus on hitting initial KPIs, and establish a weekly performance review cadence.</p></div>
+                </div>
+                <div class="mt-8"><h3>🎓 Core Training Needs</h3><div class="grid md:grid-cols-4 gap-6 text-center text-sm"><div class="bg-white p-4 rounded-lg border"><div class="font-bold mb-1">Product Knowledge</div><p class="text-gray-600">Deep understanding of features, benefits, and use cases.</p></div><div class="bg-white p-4 rounded-lg border"><div class="font-bold mb-1">Ideal Customer Profile</div><p class="text-gray-600">Mastery of who to target and the key pain points to solve.</p></div><div class="bg-white p-4 rounded-lg border"><div class="font-bold mb-1">Sales Methodology</div><p class="text-gray-600">Training on scripting, objection handling, and closing.</p></div><div class="bg-white p-4 rounded-lg border"><div class="font-bold mb-1">CRM & Tool Proficiency</div><p class="text-gray-600">Mastery of the full sales tech stack from day one.</p></div></div></div>
+            </div>
+            <div class="slide">
+                <div class="slide-number">3</div>
+                <h2 class="main-title">Performance & Incentive Framework</h2>
+                <p class="main-subtitle">A structure designed to motivate, reward, and develop top sales talent.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="plan-card"><h3 class="mb-6">📈 Performance Management</h3><div class="space-y-2"><div class="okr-card"><div class="okr-title">Objective: Achieve $300k in New Quarterly Revenue</div></div><div class="okr-card"><div class="okr-title">Manager KRs:</div><p class="okr-kr">- Maintain 20% Lead-to-Deal Conversion Rate<br>- Grow Pipeline by $1.2M</p></div><div class="okr-card"><div class="okr-title">Team Lead KRs (Lead Measures):</div><p class="okr-kr">- Team achieves 150 Qualified Meetings per Month<br>- Complete 100% of weekly coaching sessions (reviewing 1 great & 1 opportunity call per rep)<br>- Ensure 95% CRM Data Accuracy</p></div><div class="okr-card"><div class="okr-title">Sales Rep KRs (Lead Measures):</div><p class="okr-kr">- Book 15 Qualified Meetings per Month<br>- Maintain 80 Dials & 20 Conversations per Day</p></div></div></div>
+                    <div class="plan-card"><h3 class="mb-6">🏆 Incentive Structure</h3><div class="space-y-4"><div class="initiative-card"><div class="initiative-icon">🎯</div><div><div class="initiative-title">Activity-Based Bonus</div><p class="initiative-text">Tied to consistent attainment of weekly Lead Measure targets (e.g., Meetings Booked).</p></div></div><div class="initiative-card"><div class="initiative-icon">⚡</div><div><div class="initiative-title">Commission Accelerators</div><p class="initiative-text">Tiered commission rates that increase after hitting 100% of the revenue quota.</p></div></div><div class="initiative-card"><div class="initiative-icon">🎁</div><div><div class="initiative-title">SPIFFs</div><p class="initiative-text">Short-term contests to drive focus on specific Lead Measures (e.g., most dials).</p></div></div></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project4" class="project-section">
+            <div class="slide">
+                <div class="slide-number">1</div>
+                <h1 class="main-title">Inbound Sales Data: Key Findings & Trends</h1>
+                <p class="main-subtitle">An analysis of team performance over a 5-week period.</p>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="finding-card"><div class="finding-title">1. Team 1 Punches Above Its Weight</div><p class="finding-text">Team 1 is the model of efficiency. They receive only 29% of the total leads but are responsible for nearly 35% of all paid bookings. This proves they are exceptionally skilled at converting their opportunities into revenue.</p></div>
+                    <div class="finding-card"><div class="finding-title">2. High Lead Volume Masks Inefficiency</div><p class="finding-text">Team 4 receives the largest share of leads (33%) but only converts that into an equal share of bookings (34.7%). While not underperforming, they are not maximizing their advantage. Teams 2 and 3 are converting a smaller share of bookings than their lead share, indicating a clear efficiency gap.</p></div>
+                    <div class="finding-card"><div class="finding-title">3. Underperformance is a Systemic Issue</div><p class="finding-text">Teams 2 and 3 are significantly underperforming, generating less than half the revenue of the top teams. This wide performance gap suggests a systemic issue in training, process, or lead distribution that needs to be addressed urgently.</p></div>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-number">2</div>
+                <h2 class="main-title">Data Co-relation Analysis</h2>
+                <p class="main-subtitle">Visualizing the relationship between key metrics.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="finding-card"><h3 class="!text-sm !font-bold text-center">Share of Effort vs. Share of Result</h3><canvas id="shareChart"></canvas><p class="text-xs text-center italic mt-2">Team 1's positive gap shows they are outperforming their lead share, making them the most efficient team. Teams 2 and 3 have a negative gap, indicating inefficiency.</p></div>
+                    <div class="finding-card"><h3 class="!text-sm !font-bold text-center">Conversion Rate vs. Rev/Booking</h3><canvas id="conversionVsRevChart"></canvas><p class="text-xs text-center italic mt-2">This chart illustrates the "Efficiency vs. Quality" balance. Team 1 (top right) demonstrates excellence in both, defining the winning formula.</p></div>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-number">3</div>
+                <h2 class="main-title">Metric Prioritization & Recommendations</h2>
+                <p class="main-subtitle">Focusing on what matters.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="finding-card">
+                        <h3 class="!text-gray-800">Metric Prioritization</h3>
+                        <ol class="list-decimal list-inside space-y-4 text-sm">
+                            <li><strong class="text-blue-600">Share of Bookings vs. Share of Leads (The True Efficiency Metric):</strong> This is the most important metric. It moves beyond simple conversion rates to show which teams are most effective at converting the opportunities they are given. Our goal should be for every team to have a positive gap, like Team 1.</li>
+                            <li><strong class="text-blue-600">Revenue per Booking (The Profitability Metric):</strong> This is the second most critical metric. Once we improve efficiency, this metric ensures we are maximizing the value of every win. It is the key to profitability.</li>
+                            <li><strong class="text-blue-600">Conversion Rate (The Foundational Metric):</strong> While secondary to efficiency and profitability, this metric provides a baseline for the overall health of the sales funnel. It helps diagnose broader issues but should be viewed in the context of the two primary metrics above.</li>
+                        </ol>
+                    </div>
+                    <div class="finding-card">
+                        <h3 class="!text-gray-800">Questions & Recommendations</h3>
+                        <ul class="list-disc list-inside space-y-4 text-sm">
+                            <li><strong>Clone Team 1's Process Immediately:</strong> The top priority is to understand and replicate Team 1's "winning formula." We need to create a playbook based on their process and implement it as the standard for all teams.</li>
+                            <li><strong>Diagnose the High-Volume Problem:</strong> We must investigate why high lead volume leads to lower efficiency. Is it a lead quality issue from specific marketing channels, or is it a process breakdown under pressure? This requires an urgent deep dive with Team 4.</li>
+                            <li><strong>Launch a Performance Improvement Plan (PIP) for Underperforming Teams:</strong> Teams 2 and 3 require immediate intervention. They should be the first to adopt the new "Team 1 Playbook" and receive intensive coaching to bring their performance up to the new standard.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('#project-nav a');
+            const projectSections = document.querySelectorAll('.project-section');
+
+            function showProject(projectId) {
+                projectSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(projectId).classList.add('active');
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.project === projectId) {
+                        link.classList.add('active');
+                    }
+                });
+                 // Re-initialize charts if they are in the active project
+                if (projectId === 'project4') {
+                    initializeCharts();
+                }
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const projectId = this.dataset.project;
+                    showProject(projectId);
+                    // Update URL hash without jumping
+                    history.pushState(null, null, `#${projectId}`);
+                });
+            });
+            
+            // Show project based on URL hash on page load
+            const initialProject = window.location.hash ? window.location.hash.substring(1) : 'project1';
+            if(document.getElementById(initialProject)) {
+                showProject(initialProject);
+            } else {
+                 showProject('project1');
+            }
+        });
+        
+        let shareChartInstance, conversionVsRevChartInstance;
+
+        function initializeCharts() {
+            if (shareChartInstance) shareChartInstance.destroy();
+            if (conversionVsRevChartInstance) conversionVsRevChartInstance.destroy();
+
+            const shareCtx = document.getElementById('shareChart');
+            const conversionVsRevCtx = document.getElementById('conversionVsRevChart');
+
+            if (!shareCtx || !conversionVsRevCtx) return;
+
+            const chartOptions = {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+            };
+            
+            const shareData = {
+                labels: ['Team 1', 'Team 2', 'Team 3', 'Team 4'],
+                datasets: [
+                    { label: '% of Total Leads', data: [29.29, 21.85, 14.21, 33.42], backgroundColor: '#93C5FD' },
+                    { label: '% of Paid Bookings', data: [34.64, 19.72, 10.95, 34.70], backgroundColor: '#3B82F6' }
+                ]
+            };
+
+            shareChartInstance = new Chart(shareCtx, {
+                type: 'bar',
+                data: shareData,
+                options: { ...chartOptions, scales: { y: { beginAtZero: true, ticks: { callback: (value) => value + '%' } } } }
+            });
+            
+            const conversionVsRevData = {
+                datasets: [
+                    { label: 'Team 1', data: [{x: 6.71, y: 84}], backgroundColor: '#EF4444', pointRadius: 10 },
+                    { label: 'Team 2', data: [{x: 5.12, y: 78}], backgroundColor: '#F59E0B', pointRadius: 10 },
+                    { label: 'Team 3', data: [{x: 4.37, y: 82}], backgroundColor: '#10B981', pointRadius: 10 },
+                    { label: 'Team 4', data: [{x: 5.89, y: 81}], backgroundColor: '#3B82F6', pointRadius: 10 }
+                ]
+            };
+
+            conversionVsRevChartInstance = new Chart(conversionVsRevCtx, {
+                type: 'scatter',
+                data: conversionVsRevData,
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { 
+                        x: { title: { display: true, text: 'Overall Conversion Rate (%)' } },
+                        y: { title: { display: true, text: 'Overall Revenue per Booking ($)' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
